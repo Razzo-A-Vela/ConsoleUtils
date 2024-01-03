@@ -1,9 +1,0 @@
-{
-  "files.associations": {
-    "constants.h": "c",
-    "types.h": "c",
-    "conio.h": "c",
-    "consoleutils.h": "c",
-    "limits": "c"
-  }
-}
