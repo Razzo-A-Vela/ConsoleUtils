@@ -32,4 +32,4 @@ bool handleCursorWithArrows(Event* event);
 void printMenu(Menu* menu);
 bool handleMenuKeys(Event* event, Menu* menu);
 bool getMenuSelection(Event* event, Menu* menu, int* selection);
-void createMenu(Menu* ret, const char** options, size_t optionsSize);
+void createMenu(Menu* ret, char** options, size_t optionsSize);
