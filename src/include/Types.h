@@ -25,10 +25,12 @@ typedef struct {
 } TextStyle;
 
 typedef struct {
-  const char** options;
+  char* title;
+  char** options;
   size_t optionsSize;
   size_t selectedOption;
   TextStyle style;
+  TextStyle titleStyle;
   TextStyle selectedStyle;
 } Menu;
 

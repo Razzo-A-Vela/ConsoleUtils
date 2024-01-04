@@ -6,12 +6,14 @@ int main() {
   setRawMode(&original);
 
   Menu menu;
-  const char* options[] = {"Option A", "Option B", "Option C", "Exit"};
+  char* options[] = {"Option A", "Option B", "Option C", "Exit"};
   createMenu(&menu, options, sizeof(options) / sizeof(char*));
   menu.style.textColor = TEXT_COLOR_BLACK;
   menu.style.backgroundColor = TEXT_COLOR_WHITE;
   menu.selectedStyle.textColor = TEXT_COLOR_RED;
   menu.selectedStyle.backgroundColor = TEXT_COLOR_WHITE + TEXT_COLOR_MOD_BRIGHT;
+  menu.title = "Main menu";
+  menu.titleStyle = menu.style;
 
   Event event;
   while (true) {

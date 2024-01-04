@@ -182,14 +182,22 @@ bool handleCursorWithArrows(Event* event) {
 void printMenu(Menu* menu) {
   const POINT consoleSize = getConsoleSize();
   const int upSpace = consoleSize.y / 2 - menu->optionsSize;
+  const bool hasTitle = menu->title != "";
 
   int maxWidth = 0;
   for (int i = 0; i < menu->optionsSize; i++) {
     int width = strlen(menu->options[i]);
     if (width > maxWidth) maxWidth = width;
   }
+
+  int titleWidth;
+  if (hasTitle) {
+    titleWidth = strlen(menu->title) + 2;
+    if (titleWidth > maxWidth) maxWidth = titleWidth;
+  }
   const int leftSpace = consoleSize.x / 2 - maxWidth;
   maxWidth += 2;
+
 
   setCursorPos(leftSpace, upSpace);
   setTextStyle(menu->style);
@@ -197,17 +205,25 @@ void printMenu(Menu* menu) {
   putchar(VK_PIPE_DOWN_RIGHT);
   for (int i = 0; i < maxWidth; i++) putchar(VK_PIPE_LEFT_RIGHT);
   putchar(VK_PIPE_DOWN_LEFT);
+  
+  if (hasTitle) {
+    setCursorPos(leftSpace + (maxWidth / 2) - (titleWidth / 2), upSpace);
+    setTextStyle(menu->titleStyle);
+    printf("%c %s %c", VK_PIPE_UP_DOWN_LEFT, menu->title, VK_PIPE_UP_DOWN_RIGHT);
+    setTextStyle(menu->style);
+  }
 
   for (int i = 0; i < menu->optionsSize; i++) {
-    setCursorPos(leftSpace, upSpace + i + 1);
+    const bool isSelected = i == menu->selectedOption;
     const int width = strlen(menu->options[i]);
+    setCursorPos(leftSpace, upSpace + i + 1);
 
     putchar(VK_PIPE_UP_DOWN);
     for (int j = 0; j < (maxWidth - width) / 2; j++) printf(" ");
 
-    if (i == menu->selectedOption) setTextStyle(menu->selectedStyle);
+    if (isSelected) setTextStyle(menu->selectedStyle);
     printf(menu->options[i]);
-    if (i == menu->selectedOption) setTextStyle(menu->style);
+    if (isSelected) setTextStyle(menu->style);
 
     int jj = (maxWidth - width) / 2;
     for (int j = 0; j < (((maxWidth - width) % 2 == 0) ? jj : jj + 1); j++) printf(" ");
@@ -254,7 +270,8 @@ bool getMenuSelection(Event* event, Menu* menu, int* selection) {
   return true;
 }
 
-void createMenu(Menu* ret, const char** options, size_t optionsSize) {
+void createMenu(Menu* ret, char** options, size_t optionsSize) {
+  ret->title = "";
   ret->selectedOption = 0;
   ret->options = options;
   ret->optionsSize = optionsSize;
@@ -265,6 +282,7 @@ void createMenu(Menu* ret, const char** options, size_t optionsSize) {
   defaultStyle.textColor = TEXT_COLOR_DEFAULT;
   defaultStyle.style = TEXT_STYLE_DEFAULT;
   ret->style = defaultStyle;
+  ret->titleStyle = defaultStyle;
 
   defaultStyle.style = TEXT_STYLE_INVERTED;
   ret->selectedStyle = defaultStyle;
