@@ -6,7 +6,7 @@ int main() {
   setRawMode(&original);
 
   Menu menu;
-  char* options[] = {"Option A", "Option B", "Option C", "Exit"};
+  char* options[] = {"", "Option A", "Option B", "Option C", "", "Exit"};
   createMenu(&menu, options, sizeof(options) / sizeof(char*));
   menu.style.textColor = TEXT_COLOR_BLACK;
   menu.style.backgroundColor = TEXT_COLOR_WHITE;
@@ -22,13 +22,13 @@ int main() {
     printMenu(&menu);
 
     getInput(&event);
-    int selection = 0;
-    if (!getMenuSelection(&event, &menu, &selection)) continue;
-    if (selection == 3) break;
+    if (!getMenuSelection(&event, &menu, NULL)) continue;
+    char* option = menu.options[menu.selectedOption];
+    if (option == "Exit") break;
 
     clearScreen();
     setCursorPos(0, 0);
-    printf("%s\n", menu.options[selection]);
+    printf("%s\n", option);
     pauseScreen();
   }
 

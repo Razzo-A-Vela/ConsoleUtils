@@ -182,7 +182,7 @@ bool handleCursorWithArrows(Event* event) {
 void printMenu(Menu* menu) {
   const POINT consoleSize = getConsoleSize();
   const int upSpace = consoleSize.y / 2 - menu->optionsSize;
-  const bool hasTitle = menu->title != "";
+  const bool hasTitle = menu->title[0] != '\0';
 
   int maxWidth = 0;
   for (int i = 0; i < menu->optionsSize; i++) {
@@ -245,11 +245,21 @@ bool handleMenuKeys(Event* event, Menu* menu) {
 
   switch (currKey) {
     case VK_UP :
-      if (menu->selectedOption != 0) menu->selectedOption--;
+      for (int i = menu->selectedOption - 1; i >= 0; i--) {
+        if (menu->options[i][0] != '\0') {
+          menu->selectedOption = i;
+          break;
+        }
+      }
       break;
     
     case VK_DOWN :
-      if (menu->selectedOption != menu->optionsSize - 1) menu->selectedOption++;
+      for (int i = menu->selectedOption + 1; i < menu->optionsSize; i++) {
+        if (menu->options[i][0] != '\0') {
+          menu->selectedOption = i;
+          break;
+        }
+      }
       break;
 
     case VK_RETURN :
@@ -266,13 +276,20 @@ bool getMenuSelection(Event* event, Menu* menu, int* selection) {
   if (!handleMenuKeys(event, menu)) return false;
   if (event->params.keyCode.key != VK_RETURN) return false;
   
-  *selection = menu->selectedOption;
+  if (selection != NULL)
+    *selection = menu->selectedOption;
   return true;
 }
 
 void createMenu(Menu* ret, char** options, size_t optionsSize) {
+  for (int i = 0; i < optionsSize; i++) {
+    if (options[i][0] != '\0') {
+      ret->selectedOption = i;
+      break;
+    }
+  }
+
   ret->title = "";
-  ret->selectedOption = 0;
   ret->options = options;
   ret->optionsSize = optionsSize;
 
