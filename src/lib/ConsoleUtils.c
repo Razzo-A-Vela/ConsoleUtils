@@ -91,7 +91,7 @@ POINT getConsoleSize() {
 
 bool isChar(KeyCode code) {
   const char specials[] = "\\|!\"£$%&/()=?^'ìè+òàù,.-é*ç°§;:_@#[]{}€<>";
-  const int specialsLen = sizeof(specials) / sizeof(char); //? sizeof(char) = 1
+  const int specialsLen = strlen(specials);
   
   if ((code.key >= VK_A && code.key <= VK_Z) || code.key == VK_SPACE) return true;
   if (code.asChar >= '0' && code.asChar <= '9') return true;
@@ -303,4 +303,19 @@ void createMenu(Menu* ret, char** options, size_t optionsSize) {
 
   defaultStyle.style = TEXT_STYLE_INVERTED;
   ret->selectedStyle = defaultStyle;
+}
+
+void menuLoop(Menu* menu, void(*displayCode)(), bool(*inputCode)(int, const char*), bool(*eventCode)(Event*)) {
+  if (inputCode == NULL && eventCode == NULL) return;
+
+  Event event;
+  while (true) {
+    if (displayCode != NULL) displayCode();
+    printMenu(menu);
+
+    getInput(&event);
+    if (eventCode != NULL && eventCode(&event)) break;
+    if (!getMenuSelection(&event, menu, NULL)) continue;
+    if (inputCode != NULL && inputCode(menu->selectedOption, menu->options[menu->selectedOption])) break;
+  }
 }
