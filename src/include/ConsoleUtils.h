@@ -33,3 +33,4 @@ void printMenu(Menu* menu);
 bool handleMenuKeys(Event* event, Menu* menu);
 bool getMenuSelection(Event* event, Menu* menu, int* selection);
 void createMenu(Menu* ret, char** options, size_t optionsSize);
+void menuLoop(Menu* menu, void(*displayCode)(), bool(*inputCode)(int, const char*), bool(*eventCode)(Event*));
