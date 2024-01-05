@@ -1,6 +1,79 @@
 #include <stdio.h>
 #include <ConsoleUtils.h>
 
+
+void cls() {
+  clearScreen();
+}
+
+bool mainMenuInput(int selection, const char* option);
+bool subMenuInput(int selection, const char* option);
+bool inputMenuEvent(Event* event);
+
+Menu mainMenu;
+Menu subMenu;
+Menu inputMenu;
+char inputStr[16];
+int cursor;
+
+
+int main() {
+  Originals original;
+  setRawMode(&original);
+
+  char* mainMenuOptions[] = {"", "Sub Menu", "", "Exit"};
+  char* subMenuOptions[] = {inputStr, "", "Input", "Back"};
+  char* inputMenuOptions[] = {inputStr};
+  createMenu(&mainMenu, mainMenuOptions, sizeof(mainMenuOptions) / sizeof(char*));
+  mainMenu.title = "Main menu";
+  createMenu(&subMenu, subMenuOptions, sizeof(subMenuOptions) / sizeof(char*));
+  createMenu(&inputMenu, inputMenuOptions, sizeof(inputMenuOptions) / sizeof(char*));
+
+  menuLoop(&mainMenu, cls, mainMenuInput, NULL);
+
+  resetRawMode(&original);
+  return 0;
+}
+
+
+bool mainMenuInput(int selection, const char* option) {
+  if (option == "Exit") return true;
+  else if (option == "Sub Menu")
+    menuLoop(&subMenu, cls, subMenuInput, NULL);
+
+  return false;
+}
+
+bool subMenuInput(int selection, const char* option) {
+  if (option == "Back") return true;
+  else if (option == "Input") {
+    cursor = 0;
+    for (int i = 0; i < sizeof(inputStr) / sizeof(char); i++) inputStr[i] = 0;
+    menuLoop(&inputMenu, cls, NULL, inputMenuEvent);
+  }
+  
+  return false;
+}
+
+bool inputMenuEvent(Event* event) {
+  if (event->eventType != KEY_DOWN_EVENT) return false;
+  KeyCode code = event->params.keyCode;
+  if (code.key == VK_RETURN) return true;
+  
+  if (code.key == VK_BACK && cursor != 0)
+    inputStr[--cursor] = '\0';
+
+  if (isChar(code) && cursor != sizeof(inputStr) / sizeof(char) - 2)
+    inputStr[cursor++] = code.asChar;
+
+  return false;
+}
+
+
+/*
+#include <stdio.h>
+#include <ConsoleUtils.h>
+
 int main() {
   Originals original;
   setRawMode(&original);
@@ -35,7 +108,7 @@ int main() {
   resetRawMode(&original);
   return 0;
 }
-
+*/
 
 /*
 #include <stdio.h>
