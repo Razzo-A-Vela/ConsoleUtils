@@ -16,6 +16,7 @@ Menu inputMenu;
 char inputStr[16];
 int cursor;
 
+
 int main() {
   Originals original;
   setRawMode(&original);
