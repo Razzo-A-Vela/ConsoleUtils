@@ -8,6 +8,10 @@
 #define clearScreen() system("cls")
 #define pauseScreen() system("pause")
 
+typedef void (*DisplayCode)(void);
+typedef bool (*InputCode)(int, const char*);
+typedef bool (*EventCode)(Event*);
+
 
 void setRawMode(Originals* original);
 void resetRawMode(Originals* original);
@@ -33,4 +37,4 @@ void printMenu(Menu* menu);
 bool handleMenuKeys(Event* event, Menu* menu);
 bool getMenuSelection(Event* event, Menu* menu, int* selection);
 void createMenu(Menu* ret, char** options, size_t optionsSize);
-void menuLoop(Menu* menu, void(*displayCode)(), bool(*inputCode)(int, const char*), bool(*eventCode)(Event*));
+void menuLoop(Menu* menu, DisplayCode displayCode, InputCode inputCode, EventCode eventCode);

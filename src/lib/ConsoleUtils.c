@@ -305,7 +305,7 @@ void createMenu(Menu* ret, char** options, size_t optionsSize) {
   ret->selectedStyle = defaultStyle;
 }
 
-void menuLoop(Menu* menu, void(*displayCode)(), bool(*inputCode)(int, const char*), bool(*eventCode)(Event*)) {
+void menuLoop(Menu* menu, DisplayCode displayCode, InputCode inputCode, EventCode eventCode) {
   if (inputCode == NULL && eventCode == NULL) return;
 
   Event event;
