@@ -1,0 +1,5 @@
+includes = "-I" "src\include"
+libs = "src\lib\**"
+
+build:
+	gcc "-g3" "-std=c17" ${includes} ${libs} "test\Test.c" "-o" "test\Test.exe"
