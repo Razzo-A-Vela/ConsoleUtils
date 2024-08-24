@@ -14,6 +14,7 @@ void resetRawMode(Originals* original) {
   SetConsoleMode(stdInput, original->input);
   SetConsoleMode(stdOutput, original->output);
   SetConsoleCtrlHandler(NULL, FALSE);
+  resetTextStyle();
 }
 
 POINT getCursorPos() {
