@@ -139,7 +139,7 @@ int main() {
 
     if (code.key == VK_BACK) {
       if (getCursorPos().x == 0) continue;
-      resetStyle();
+      resetTextStyle();
       
       moveCursor(-1, 0);
       putchar(' ');
@@ -164,8 +164,7 @@ int main() {
 #include <stdio.h>
 #include <stdlib.h>
 
-int main(void)
-{
+int main() {
   for (int i = 0; i < 11; i++) {
     for (int j = 0; j < 10; j++) {
       int n = 10 * i + j;
