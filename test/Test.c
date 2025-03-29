@@ -32,6 +32,7 @@ int main() {
   menuLoop(&mainMenu, cls, mainMenuInput, NULL);
 
   resetRawMode(&original);
+  clearScreen();
   return 0;
 }
 
