@@ -1,5 +1,10 @@
 #include <ConsoleUtils.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+static TextStyle currentTextStyle = { TEXT_STYLE_DEFAULT, TEXT_COLOR_DEFAULT, TEXT_COLOR_DEFAULT };
 
 void setRawMode(Originals* original) {
   GetConsoleMode(stdInput, &original->input);
@@ -329,3 +334,7 @@ void menuLoop(Menu* menu, DisplayCode displayCode, InputCode inputCode, EventCod
 TextStyle getTextStyle() {
   return currentTextStyle;
 }
+
+#ifdef __cplusplus
+}
+#endif

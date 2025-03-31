@@ -1,6 +1,10 @@
 #include <windows.h>
 #include <stdio.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "Constants.h"
 #include "Types.h"
 
@@ -41,3 +45,7 @@ void createMenu(Menu* ret, char** options, size_t optionsSize);
 void menuLoop(Menu* menu, DisplayCode displayCode, InputCode inputCode, EventCode eventCode);
 //! if console starts with non default colors it wont know (to fix)
 TextStyle getTextStyle();
+
+#ifdef __cplusplus
+}
+#endif
