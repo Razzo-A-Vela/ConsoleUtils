@@ -2,7 +2,6 @@
 #include <stdio.h>
 
 #ifdef __cplusplus
-namespace ConsoleUtils {
 extern "C" {
 #endif
 
@@ -48,6 +47,5 @@ void menuLoop(Menu* menu, DisplayCode displayCode, InputCode inputCode, EventCod
 TextStyle getTextStyle();
 
 #ifdef __cplusplus
-}
 }
 #endif
