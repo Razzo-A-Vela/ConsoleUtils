@@ -103,6 +103,7 @@ bool isChar(KeyCode code) {
 }
 
 void setStyle(int style) {
+  currentTextStyle.style = style;
   if (style == TEXT_STYLE_DEFAULT) printf("\033[m");
 
   if (style & TEXT_STYLE_BOLD) printf("\033[1m");
@@ -116,10 +117,12 @@ void setStyle(int style) {
 }
 
 void setTextColor(int color) {
+  currentTextStyle.textColor = color;
   printf("\033[%dm", color);
 }
 
 void setBackgroundColor(int color) {
+  currentTextStyle.backgroundColor = color;
   printf("\033[%dm", color + 10);
 }
 
@@ -140,6 +143,7 @@ void resetTextStyle() {
 
 int printfWithStyle(TextStyle style, const char* format, ...) {
   int ret;
+  const TextStyle previousTextStyle = getTextStyle();
   setTextStyle(style);
 
   va_list args;
@@ -147,7 +151,7 @@ int printfWithStyle(TextStyle style, const char* format, ...) {
   ret = vprintf(format, args);
   va_end(args);
 
-  resetTextStyle();
+  setTextStyle(previousTextStyle);
   return ret;
 }
 
@@ -181,6 +185,7 @@ bool handleCursorWithArrows(Event* event) {
 }
 
 void printMenu(Menu* menu) {
+  const TextStyle previousTextStyle = getTextStyle();
   const POINT consoleSize = getConsoleSize();
   const int upSpace = consoleSize.y / 2 - menu->optionsSize;
   const bool hasTitle = menu->title[0] != '\0';
@@ -237,7 +242,7 @@ void printMenu(Menu* menu) {
   putchar(VK_PIPE_UP_LEFT);
 
   setCursorPos(0, 0);
-  resetTextStyle();
+  setTextStyle(previousTextStyle);
 }
 
 bool handleMenuKeys(Event* event, Menu* menu) {
@@ -319,4 +324,8 @@ void menuLoop(Menu* menu, DisplayCode displayCode, InputCode inputCode, EventCod
     if (!getMenuSelection(&event, menu, NULL)) continue;
     if (inputCode != NULL && inputCode(menu->selectedOption, menu->options[menu->selectedOption])) break;
   }
+}
+
+TextStyle getTextStyle() {
+  return currentTextStyle;
 }

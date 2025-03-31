@@ -29,6 +29,7 @@ void setTextColor(int color);
 void setBackgroundColor(int color);
 void setColor(int textColor, int backgroundColor);
 void setTextStyle(TextStyle textStyle);
+//! if console starts with non default colors it will reset to default colors (to fix)
 void resetTextStyle();
 int printfWithStyle(TextStyle style, const char* format, ...);
 bool handleCtrlQ(Event* event);
@@ -38,3 +39,5 @@ bool handleMenuKeys(Event* event, Menu* menu);
 bool getMenuSelection(Event* event, Menu* menu, int* selection);
 void createMenu(Menu* ret, char** options, size_t optionsSize);
 void menuLoop(Menu* menu, DisplayCode displayCode, InputCode inputCode, EventCode eventCode);
+//! if console starts with non default colors it wont know (to fix)
+TextStyle getTextStyle();
