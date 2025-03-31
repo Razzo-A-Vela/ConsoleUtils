@@ -1,6 +1,7 @@
 #include <ConsoleUtils.h>
 
 #ifdef __cplusplus
+namespace ConsoleUtils {
 extern "C" {
 #endif
 
@@ -336,5 +337,6 @@ TextStyle getTextStyle() {
 }
 
 #ifdef __cplusplus
+}
 }
 #endif
