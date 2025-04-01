@@ -4,7 +4,7 @@
       "type": "cppbuild",
       "label": "C/C++: gcc.exe build active file",
       "command": "mingw32-make",
-      "args": [ "build" ],
+      "args": [ "C" ],
       "options": {
         "cwd": "${workspaceFolder}"
       },
