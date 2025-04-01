@@ -1,5 +1,27 @@
-includes = "-I" "src\include"
-libs = "src\lib\**"
+includes = -I "src\include"
+libs = "src\lib\**.c"
+flags = -g3
+cFlags = ${flags} -std=c17
+c++Flags = ${flags} -std=c++17
 
-build:
-	gcc "-g3" "-std=c17" ${includes} ${libs} "test\Test.c" "-o" "test\Test.exe"
+default:
+	@echo Expected "C" or "C++"
+
+C: build-obj build-C cleanup
+
+C++: build-obj build-C++ cleanup
+
+
+build-obj:
+	gcc ${cFlags} -c ${includes} ${libs} -o "test\ConsoleUtils.obj"
+
+build-C:
+	gcc ${cFlags} -c ${includes} "test\C\Test.c" -o "test\Test.obj"
+	gcc "test\*.obj" -o "test\C\Test.exe"
+
+build-C++:
+	g++ ${c++Flags} -c ${includes} "test\C++\Test.cpp" -o "test\Test.obj"
+	g++ "test\*.obj" -o "test\C++\Test.exe"
+
+cleanup:
+	del "test\*.obj"
