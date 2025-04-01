@@ -99,10 +99,13 @@ bool isChar(KeyCode code) {
   const char specials[] = "\\|!\"£$%&/()=?^'ìè+òàù,.-é*ç°§;:_@#[]{}€<>";
   const int specialsLen = strlen(specials);
   
-  if ((code.key >= VK_A && code.key <= VK_Z) || code.key == VK_SPACE) return true;
-  if (code.asChar >= '0' && code.asChar <= '9') return true;
-  for (int i = 0; i < specialsLen; i++)
-    if (code.asChar == specials[i]) return true;
+  if ((code.key >= VK_A && code.key <= VK_Z) || (code.key >= VK_0 && code.key <= VK_9) || code.key == VK_SPACE)
+    return true;
+  
+  for (int i = 0; i < specialsLen; i++) {
+    if (code.asChar == specials[i])
+      return true;
+  }
 
   return false;
 }
@@ -165,7 +168,8 @@ bool handleCtrlQ(Event* event) {
 }
 
 bool handleCursorWithArrows(Event* event) {
-  if (event->eventType != KEY_DOWN_EVENT) return false;
+  if (event->eventType != KEY_DOWN_EVENT)
+    return false;
   KeyCode keyCode = event->params.keyCode;
 
   switch (keyCode.key) {
@@ -251,7 +255,8 @@ void printMenu(Menu* menu) {
 }
 
 bool handleMenuKeys(Event* event, Menu* menu) {
-  if (event->eventType != KEY_DOWN_EVENT) return false;
+  if (event->eventType != KEY_DOWN_EVENT)
+    return false;
   int currKey = event->params.keyCode.key;
 
   switch (currKey) {
@@ -284,8 +289,10 @@ bool handleMenuKeys(Event* event, Menu* menu) {
 }
 
 bool getMenuSelection(Event* event, Menu* menu, int* selection) {
-  if (!handleMenuKeys(event, menu)) return false;
-  if (event->params.keyCode.key != VK_RETURN) return false;
+  if (!handleMenuKeys(event, menu))
+    return false;
+  if (event->params.keyCode.key != VK_RETURN)
+    return false;
   
   if (selection != NULL)
     *selection = menu->selectedOption;
