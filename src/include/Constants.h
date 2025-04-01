@@ -1,9 +1,12 @@
+#pragma once
 
 #define stdInput GetStdHandle(STD_INPUT_HANDLE)
 #define stdOutput GetStdHandle(STD_OUTPUT_HANDLE)
 
-#define true 1
-#define false 0
+#ifndef __cplusplus
+  #define true 1
+  #define false 0
+#endif
 
 
 #define UNHANDLED_EVENT 0

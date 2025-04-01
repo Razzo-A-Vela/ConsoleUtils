@@ -1,6 +1,9 @@
+#pragma once
 #include <windows.h>
 
-typedef int bool;
+#ifndef __cplusplus
+  typedef unsigned char bool;
+#endif
 
 typedef struct {
   int key;

@@ -1,3 +1,4 @@
+#pragma once
 #include <windows.h>
 #include <stdio.h>
 
@@ -8,7 +9,6 @@ extern "C" {
 #include "Constants.h"
 #include "Types.h"
 
-#define xor(x, y) (!(x && y) && (x || y))
 #define clearScreen() system("cls")
 #define pauseScreen() system("pause")
 
