@@ -5,11 +5,13 @@ cFlags = ${flags} -std=c17
 c++Flags = ${flags} -std=c++17
 
 default:
-	@echo Expected "C" or "C++"
+	@echo Expected "C" or "C++" or "all"
 
 C: build-obj build-C cleanup
 
 C++: build-obj build-C++ cleanup
+
+all: build-obj build-C build-C++ cleanup
 
 
 build-obj:
