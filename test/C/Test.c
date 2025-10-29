@@ -1,3 +1,224 @@
+// TextViewer
+#include <stdio.h>
+#include <ConsoleUtils.h>
+
+float explorerPerc = ((float) 1) / ((float) 4);
+char* selectedFilePath;
+int selectedFileIndex = 0;
+int cursorPos = 0;
+
+int explorerLine() {
+  POINT consoleSize = getConsoleSize();
+
+  int x = explorerPerc * ((float) consoleSize.x);
+  for (int y = 0; y < consoleSize.y; y++) {
+    setCursorPos(x, y);
+    putchar(VK_PIPE_UP_DOWN);
+  }
+
+  return x;
+}
+
+void printTxts() {
+  WIN32_FIND_DATA findData;
+  HANDLE hFind = NULL;
+  int index = 0;
+  selectedFilePath[0] = '\0';
+
+  char dir[4096];
+  GetCurrentDirectory(4096, dir);
+
+  if (selectedFileIndex < 0)
+    selectedFileIndex = 0;
+
+  char path[4096];
+  sprintf(path, "%s\\%s", dir, "*.txt");
+  hFind = FindFirstFile(path, &findData);
+  do {
+    setCursorPos(0, index);
+    if (index == selectedFileIndex) {
+      printf("[X]");
+      strcpy(selectedFilePath, findData.cFileName);
+    } else
+      printf("[ ]");
+
+    printf("  %s", findData.cFileName);
+    index++;
+  } while (FindNextFile(hFind, &findData));
+  if (selectedFileIndex >= index) {
+    selectedFileIndex = index - 1;
+    strcpy(selectedFilePath, findData.cFileName);
+  }
+  FindClose(hFind);
+}
+
+void renderFile(int x) {
+  if (strcmp(selectedFilePath, "") == 0)
+    return;
+
+  if (cursorPos < 0)
+    cursorPos = 0;
+  
+  POINT cursorPosVec = {0, 0};
+  int line = 0;
+  setCursorPos(x, line++);
+  char c;
+  int index = 0;
+  FILE* file = fopen(selectedFilePath, "r");
+  printf("%d ", line);
+  cursorPosVec.x = 0;
+  cursorPosVec.y = 0;
+  while ((c = fgetc(file)) != EOF) {
+    if (index == cursorPos) {
+      cursorPosVec = getCursorPos();
+      cursorPosVec.x -= x;
+    }
+    if (c == '\n') {
+      setCursorPos(x, line++);
+      printf("%d ", line);
+    } else
+      printf("%c", c);
+    index++;
+  }
+  fclose(file);
+
+  if (cursorPos >= index)
+    cursorPos = index;
+  else
+    setCursorPos(cursorPosVec.x + x, cursorPosVec.y);
+}
+
+
+Menu exitMenu;
+bool wantsExit = false;
+
+bool exitMenuInput(int option, const char* optionStr) {
+  if (option == 1)
+    wantsExit = true;
+  return true;
+}
+
+int main() {
+  Originals originals;
+  setRawMode(&originals);
+  clearScreen();
+  selectedFilePath = malloc(4096 * sizeof(char)); //? sizeof(char) == 1
+
+  TextStyle tempStyle;
+  char* exitMenuOptions[] = {"", "Yes", "No"};
+  createMenu(&exitMenu, exitMenuOptions, 3);
+  exitMenu.title = "Are you sure?";
+  tempStyle.style = TEXT_STYLE_UNDERLINED;
+  tempStyle.backgroundColor = TEXT_COLOR_DEFAULT;
+  tempStyle.textColor = TEXT_COLOR_DEFAULT;
+  exitMenu.selectedStyle = tempStyle;
+
+  Event event;
+  while (true) {
+    // render
+    clearScreen();
+    printTxts();
+    renderFile(explorerLine() + 1);
+
+    // tick
+    getInput(&event);
+    if (handleCtrlQ(&event)) {
+      menuLoop(&exitMenu, NULL, exitMenuInput, NULL);
+
+      if (wantsExit)
+        break;
+    } else if (event.eventType == KEY_DOWN_EVENT) {
+      KeyCode c = event.params.keyCode;
+      if (c.key == VK_UP)
+        selectedFileIndex--;
+      else if (c.key == VK_DOWN)
+        selectedFileIndex++;
+      else if (c.key == VK_LEFT)
+        cursorPos--;
+      else if (c.key == VK_RIGHT)
+        cursorPos++;
+    }
+  }
+
+  resetRawMode(&originals);
+  clearScreen();
+  return 0;
+}
+
+
+/*
+#include <stdio.h>
+#include <ConsoleUtils.h>
+
+void renderColors(int xSize, int ySize, int colors[xSize][ySize]) {
+  POINT size = getConsoleSize();
+  float densityX = (float) size.x / (float) xSize;
+  float densityY = (float) size.y / (float) ySize;
+
+  TextStyle style;
+  style.style = TEXT_STYLE_DEFAULT;
+  style.textColor = TEXT_COLOR_DEFAULT;
+  for (int x = 0; x < xSize; x++) {
+    for (int y = 0; y < ySize; y++) {
+      for (int xD = 0; xD < densityX; xD++) {
+        for (int yD = 0; yD < densityY; yD++) {
+          style.backgroundColor = colors[x][y];
+
+          setCursorPos((int) ((float) x * densityX + (float) xD), (int) ((float) y * densityY + (float) yD));
+          printfWithStyle(style, " ");
+        }
+      }
+    }
+  }
+}
+
+int main() {
+  Originals original;
+  setRawMode(&original);
+  clearScreen();
+
+  #define X_SIZE 16
+  #define Y_SIZE 16
+  int colors[X_SIZE][Y_SIZE];
+  for (int x = 0; x < X_SIZE; x++) {
+    for (int y = 0; y < Y_SIZE; y++) {
+      int perc = (int) ((float) x / ((float) X_SIZE / 3.0f) + 0.1f);
+      if (perc == 0) {
+        colors[x][y] = TEXT_COLOR_GREEN + TEXT_COLOR_MOD_BRIGHT;
+      } else if (perc == 1) {
+        colors[x][y] = TEXT_COLOR_WHITE + TEXT_COLOR_MOD_BRIGHT;
+      } else {
+        colors[x][y] = TEXT_COLOR_RED + TEXT_COLOR_MOD_BRIGHT;
+      }
+    }
+  }
+
+
+  #define RENDER_COOLDOWN 5
+  int renderCooldown = 0;
+  Event event;
+  while (true) {
+    if (renderCooldown == 0) {
+      renderColors(X_SIZE, Y_SIZE, colors);
+      renderCooldown = RENDER_COOLDOWN;
+    } else
+      renderCooldown--;
+    
+    getInput(&event);
+    if (handleCtrlQ(&event))
+      break;
+    else if (event.eventType == KEY_DOWN_EVENT && event.params.keyCode.key == VK_SPACE)
+      renderCooldown = 0;
+  }
+
+  resetRawMode(&original);
+  clearScreen();
+  return 0;
+}
+*/
+
+
+/*
 #include <stdio.h>
 #include <ConsoleUtils.h>
 
@@ -69,6 +290,7 @@ bool inputMenuEvent(Event* event) {
 
   return false;
 }
+*/
 
 
 /*
