@@ -3,7 +3,7 @@
 #define stdInput GetStdHandle(STD_INPUT_HANDLE)
 #define stdOutput GetStdHandle(STD_OUTPUT_HANDLE)
 
-#ifndef __cplusplus
+#if !defined(__cplusplus) && !defined(_STDBOOL)
   #define true 1
   #define false 0
 #endif

@@ -1,7 +1,7 @@
 #pragma once
 #include <windows.h>
 
-#ifndef __cplusplus
+#if !defined(__cplusplus) && !defined(_STDBOOL)
   typedef unsigned char bool;
 #endif
 
