@@ -11,8 +11,9 @@ extern "C" {
 #include "Types.h"
 
 
+typedef char* MenuOption;
 typedef void (*DisplayCode)(void);
-typedef bool (*InputCode)(int, const char*);
+typedef bool (*InputCode)(int, const MenuOption);
 typedef bool (*EventCode)(Event*);
 
 #define clearScreen() system("cls")
@@ -41,13 +42,14 @@ bool handleCursorWithArrows(Event* event);
 void printMenu(Menu* menu);
 bool handleMenuKeys(Event* event, Menu* menu);
 bool getMenuSelection(Event* event, Menu* menu, int* selection);
-void createMenu(Menu* ret, char** options, size_t optionsSize);
+void _createMenu(Menu* ret, MenuOption* options, size_t optionsSize);
 void menuLoop(Menu* menu, DisplayCode displayCode, InputCode inputCode, EventCode eventCode);
 //! if console starts with non default colors it wont know (to fix)
 TextStyle getTextStyle();
 void toggleCursor(bool show);
 #define showCursor() toggleCursor(true)
 #define hideCursor() toggleCursor(false)
+#define createMenu(ret, options) _createMenu(ret, options, sizeof(options) / sizeof(options[0]))
 
 #ifdef __cplusplus
 }

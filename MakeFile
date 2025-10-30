@@ -1,5 +1,4 @@
-includes = -I "src\include"
-libs = "src\lib\**.c"
+cFiles = "src\ConsoleUtils\**.c"
 flags = -g3
 cFlags = ${flags} -std=c17
 c++Flags = ${flags} -std=c++17
@@ -15,14 +14,14 @@ all: build-obj build-C build-C++ cleanup
 
 
 build-obj:
-	gcc ${cFlags} -c ${includes} ${libs} -o "test\ConsoleUtils.obj"
+	gcc ${cFlags} -c ${cFiles} -o "test\ConsoleUtils.obj"
 
 build-C:
-	gcc ${cFlags} -c ${includes} "test\C\Test.c" -o "test\Test.obj"
+	gcc ${cFlags} -c -I "src\ConsoleUtils" "test\C\Test.c" -o "test\Test.obj"
 	gcc "test\*.obj" -o "test\C\Test.exe"
 
 build-C++:
-	g++ ${c++Flags} -c ${includes} "test\C++\Test.cpp" -o "test\Test.obj"
+	g++ ${c++Flags} -c -I "src\ConsoleUtils" "test\C++\Test.cpp" -o "test\Test.obj"
 	g++ "test\*.obj" -o "test\C++\Test.exe"
 
 cleanup:

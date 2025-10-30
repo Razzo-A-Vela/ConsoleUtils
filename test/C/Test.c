@@ -92,7 +92,7 @@ void renderFile(int x) {
 Menu exitMenu;
 bool wantsExit = false;
 
-bool exitMenuInput(int option, const char* optionStr) {
+bool exitMenuInput(int option, const MenuOption optionStr) {
   if (option == 1)
     wantsExit = true;
   return true;
@@ -105,8 +105,8 @@ int main() {
   selectedFilePath = malloc(4096 * sizeof(char)); //? sizeof(char) == 1
 
   TextStyle tempStyle;
-  char* exitMenuOptions[] = {"", "Yes", "No"};
-  createMenu(&exitMenu, exitMenuOptions, 3);
+  MenuOption exitMenuOptions[] = {"", "Yes", "No"};
+  createMenu(&exitMenu, exitMenuOptions);
   exitMenu.title = "Are you sure?";
   tempStyle.style = TEXT_STYLE_UNDERLINED;
   tempStyle.backgroundColor = TEXT_COLOR_DEFAULT;
@@ -229,8 +229,8 @@ void cls() {
   clearScreen();
 }
 
-bool mainMenuInput(int selection, const char* option);
-bool subMenuInput(int selection, const char* option);
+bool mainMenuInput(int selection, const MenuOption option);
+bool subMenuInput(int selection, const MenuOption option);
 bool inputMenuEvent(Event* event);
 
 Menu mainMenu;
@@ -244,13 +244,13 @@ int main() {
   Originals original;
   setRawMode(&original);
 
-  char* mainMenuOptions[] = {"", "Sub Menu", "", "Exit"};
-  char* subMenuOptions[] = {inputStr, "", "Input", "Back"};
-  char* inputMenuOptions[] = {inputStr};
-  createMenu(&mainMenu, mainMenuOptions, sizeof(mainMenuOptions) / sizeof(char*));
+  MenuOption mainMenuOptions[] = {"", "Sub Menu", "", "Exit"};
+  MenuOption subMenuOptions[] = {inputStr, "", "Input", "Back"};
+  MenuOption inputMenuOptions[] = {inputStr};
+  createMenu(&mainMenu, mainMenuOptions);
   mainMenu.title = "Main menu";
-  createMenu(&subMenu, subMenuOptions, sizeof(subMenuOptions) / sizeof(char*));
-  createMenu(&inputMenu, inputMenuOptions, sizeof(inputMenuOptions) / sizeof(char*));
+  createMenu(&subMenu, subMenuOptions);
+  createMenu(&inputMenu, inputMenuOptions);
 
   menuLoop(&mainMenu, cls, mainMenuInput, NULL);
 
@@ -260,7 +260,7 @@ int main() {
 }
 
 
-bool mainMenuInput(int selection, const char* option) {
+bool mainMenuInput(int selection, const MenuOption option) {
   if (option == "Exit") return true;
   else if (option == "Sub Menu")
     menuLoop(&subMenu, cls, subMenuInput, NULL);
@@ -268,7 +268,7 @@ bool mainMenuInput(int selection, const char* option) {
   return false;
 }
 
-bool subMenuInput(int selection, const char* option) {
+bool subMenuInput(int selection, const MenuOption option) {
   if (option == "Back") return true;
   else if (option == "Input") {
     cursor = 0;
@@ -304,8 +304,8 @@ int main() {
   setRawMode(&original);
 
   Menu menu;
-  char* options[] = {"", "Option A", "Option B", "Option C", "", "Exit"};
-  createMenu(&menu, options, sizeof(options) / sizeof(char*));
+  MenuOption options[] = {"", "Option A", "Option B", "Option C", "", "Exit"};
+  createMenu(&menu, options);
   menu.style.textColor = TEXT_COLOR_BLACK;
   menu.style.backgroundColor = TEXT_COLOR_WHITE;
   menu.selectedStyle.textColor = TEXT_COLOR_RED;
@@ -321,7 +321,7 @@ int main() {
 
     getInput(&event);
     if (!getMenuSelection(&event, &menu, NULL)) continue;
-    char* option = menu.options[menu.selectedOption];
+    MenuOption option = menu.options[menu.selectedOption];
     if (option == "Exit") break;
 
     clearScreen();

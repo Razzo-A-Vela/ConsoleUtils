@@ -1,4 +1,4 @@
-#include <ConsoleUtils.h>
+#include "ConsoleUtils.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -299,7 +299,7 @@ bool getMenuSelection(Event* event, Menu* menu, int* selection) {
   return true;
 }
 
-void createMenu(Menu* ret, char** options, size_t optionsSize) {
+void _createMenu(Menu* ret, MenuOption* options, size_t optionsSize) {
   for (int i = 0; i < optionsSize; i++) {
     if (options[i][0] != '\0') {
       ret->selectedOption = i;
