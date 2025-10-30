@@ -342,6 +342,13 @@ TextStyle getTextStyle() {
   return currentTextStyle;
 }
 
+void toggleCursor(bool show) {
+  CONSOLE_CURSOR_INFO info;
+  GetConsoleCursorInfo(stdOutput, &info);
+  info.bVisible = show;
+  SetConsoleCursorInfo(stdOutput, &info);
+}
+
 #ifdef __cplusplus
 }
 #endif
