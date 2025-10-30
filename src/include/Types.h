@@ -1,10 +1,6 @@
 #pragma once
 #include <windows.h>
 
-#if !defined(__cplusplus) && !defined(_STDBOOL)
-  typedef unsigned char bool;
-#endif
-
 typedef struct {
   int key;
   char asChar;

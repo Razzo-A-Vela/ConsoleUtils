@@ -3,12 +3,6 @@
 #define stdInput GetStdHandle(STD_INPUT_HANDLE)
 #define stdOutput GetStdHandle(STD_OUTPUT_HANDLE)
 
-#if !defined(__cplusplus) && !defined(_STDBOOL)
-  #define true 1
-  #define false 0
-#endif
-
-
 #define UNHANDLED_EVENT 0
 #define KEY_DOWN_EVENT 1
 #define KEY_UP_EVENT 2
