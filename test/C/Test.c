@@ -176,6 +176,7 @@ int main() {
   Originals original;
   setRawMode(&original);
   clearScreen();
+  hideCursor();
 
   #define X_SIZE 16
   #define Y_SIZE 16
@@ -211,6 +212,7 @@ int main() {
       renderCooldown = 0;
   }
 
+  showCursor();
   resetRawMode(&original);
   clearScreen();
   return 0;
