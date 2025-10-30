@@ -10,12 +10,6 @@ extern "C" {
 #include "Constants.h"
 #include "Types.h"
 
-
-typedef char* MenuOption;
-typedef void (*DisplayCode)(void);
-typedef bool (*InputCode)(int, const MenuOption);
-typedef bool (*EventCode)(Event*);
-
 #define clearScreen() system("cls")
 #define pauseScreen() system("pause")
 void setRawMode(Originals* original);

@@ -1,6 +1,8 @@
 #pragma once
 #include <windows.h>
 
+typedef char* MenuOption;
+
 typedef struct {
   int key;
   char asChar;
@@ -37,3 +39,7 @@ typedef struct {
   DWORD input;
   DWORD output;
 } Originals;
+
+typedef void (*DisplayCode)(void);
+typedef bool (*InputCode)(int, const MenuOption);
+typedef bool (*EventCode)(Event*);
