@@ -25,7 +25,7 @@ typedef struct {
 
 typedef struct {
   char* title;
-  char** options;
+  MenuOption* options;
   size_t optionsSize;
   size_t selectedOption;
   TextStyle style;
