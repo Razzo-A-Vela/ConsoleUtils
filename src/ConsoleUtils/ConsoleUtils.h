@@ -49,7 +49,8 @@ TextStyle getTextStyle();
 void toggleCursor(bool show);
 #define showCursor() toggleCursor(true)
 #define hideCursor() toggleCursor(false)
-#define createMenu(ret, options) _createMenu(ret, options, sizeof(options) / sizeof(options[0]))
+#define createMenu(ret, options) _createMenu(&ret, options, sizeof(options) / sizeof(options[0]))
+#define createMenuWithTitle(ret, _title, options) createMenu(ret, options); ret.title = _title
 
 #ifdef __cplusplus
 }

@@ -106,8 +106,7 @@ int main() {
 
   TextStyle tempStyle;
   MenuOption exitMenuOptions[] = {"", "Yes", "No"};
-  createMenu(&exitMenu, exitMenuOptions);
-  exitMenu.title = "Are you sure?";
+  createMenuWithTitle(exitMenu, "Are you sure?", exitMenuOptions);
   tempStyle.style = TEXT_STYLE_UNDERLINED;
   tempStyle.backgroundColor = TEXT_COLOR_DEFAULT;
   tempStyle.textColor = TEXT_COLOR_DEFAULT;
@@ -247,10 +246,9 @@ int main() {
   MenuOption mainMenuOptions[] = {"", "Sub Menu", "", "Exit"};
   MenuOption subMenuOptions[] = {inputStr, "", "Input", "Back"};
   MenuOption inputMenuOptions[] = {inputStr};
-  createMenu(&mainMenu, mainMenuOptions);
-  mainMenu.title = "Main menu";
-  createMenu(&subMenu, subMenuOptions);
-  createMenu(&inputMenu, inputMenuOptions);
+  createMenuWithTitle(mainMenu, "Main menu", mainMenuOptions);
+  createMenu(subMenu, subMenuOptions);
+  createMenu(inputMenu, inputMenuOptions);
 
   menuLoop(&mainMenu, cls, mainMenuInput, NULL);
 
@@ -305,12 +303,11 @@ int main() {
 
   Menu menu;
   MenuOption options[] = {"", "Option A", "Option B", "Option C", "", "Exit"};
-  createMenu(&menu, options);
+  createMenuWithTitle(menu, "Main menu", options);
   menu.style.textColor = TEXT_COLOR_BLACK;
   menu.style.backgroundColor = TEXT_COLOR_WHITE;
   menu.selectedStyle.textColor = TEXT_COLOR_RED;
   menu.selectedStyle.backgroundColor = TEXT_COLOR_WHITE + TEXT_COLOR_MOD_BRIGHT;
-  menu.title = "Main menu";
   menu.titleStyle = menu.style;
 
   Event event;
