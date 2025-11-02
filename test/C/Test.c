@@ -104,13 +104,10 @@ int main() {
   clearScreen();
   selectedFilePath = malloc(4096 * sizeof(char)); //? sizeof(char) == 1
 
-  TextStyle tempStyle;
   MenuOption exitMenuOptions[] = {"", "Yes", "No"};
   createMenuWithTitle(exitMenu, "Are you sure?", exitMenuOptions);
-  tempStyle.style = TEXT_STYLE_UNDERLINED;
-  tempStyle.backgroundColor = TEXT_COLOR_DEFAULT;
-  tempStyle.textColor = TEXT_COLOR_DEFAULT;
-  exitMenu.selectedStyle = tempStyle;
+  exitMenu.selectedStyle.style = TEXT_STYLE_UNDERLINED;
+  exitMenu.titleStyle.style = TEXT_STYLE_INVERTED;
 
   Event event;
   while (true) {

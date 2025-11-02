@@ -20,9 +20,9 @@ typedef struct {
 } Event;
 
 typedef struct {
+  int style;
   int textColor;
   int backgroundColor;
-  int style;
 } TextStyle;
 
 typedef struct {

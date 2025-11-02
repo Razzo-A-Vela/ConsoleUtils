@@ -195,60 +195,41 @@ bool handleCursorWithArrows(Event* event) {
 
 void printMenu(Menu* menu) {
   const TextStyle previousTextStyle = getTextStyle();
-  const POINT consoleSize = getConsoleSize();
-  const int upSpace = consoleSize.y / 2 - menu->optionsSize;
-  const bool hasTitle = menu->title[0] != '\0';
-
-  int maxWidth = 0;
-  for (int i = 0; i < menu->optionsSize; i++) {
-    int width = strlen(menu->options[i]);
-    if (width > maxWidth) maxWidth = width;
-  }
-
-  int titleWidth;
-  if (hasTitle) {
-    titleWidth = strlen(menu->title) + 2;
-    if (titleWidth > maxWidth) maxWidth = titleWidth;
-  }
-  const int leftSpace = consoleSize.x / 2 - maxWidth;
-  maxWidth += 2;
-
-
-  setCursorPos(leftSpace, upSpace);
   setTextStyle(menu->style);
 
-  putchar(VK_PIPE_DOWN_RIGHT);
-  for (int i = 0; i < maxWidth; i++) putchar(VK_PIPE_LEFT_RIGHT);
-  putchar(VK_PIPE_DOWN_LEFT);
-  
-  if (hasTitle) {
-    setCursorPos(leftSpace + (maxWidth / 2) - (titleWidth / 2), upSpace);
-    setTextStyle(menu->titleStyle);
-    printf("%c %s %c", VK_PIPE_UP_DOWN_LEFT, menu->title, VK_PIPE_UP_DOWN_RIGHT);
-    setTextStyle(menu->style);
+  int xSize = 0;
+  for (int i = 0; i < menu->optionsSize; i++) {
+    int len = strlen(menu->options[i]);
+    if (len > xSize)
+      xSize = len;
   }
+  
+  RECT box = printBoxWithTitleAndStyle(menu->title, menu->titleStyle, xSize + 2, menu->optionsSize + 2);
+
+  int boxX = box.left;
+  int boxY = box.top;
+  int boxXSize = box.right - box.left;
+  int boxYSize = box.bottom - box.top;
+  box.left++;
+  box.top++;
+  box.right--;
+  box.bottom--;
 
   for (int i = 0; i < menu->optionsSize; i++) {
     const bool isSelected = i == menu->selectedOption;
     const int width = strlen(menu->options[i]);
-    setCursorPos(leftSpace, upSpace + i + 1);
-
-    putchar(VK_PIPE_UP_DOWN);
-    for (int j = 0; j < (maxWidth - width) / 2; j++) printf(" ");
-
-    if (isSelected) setTextStyle(menu->selectedStyle);
-    printf(menu->options[i]);
-    if (isSelected) setTextStyle(menu->style);
-
-    int jj = (maxWidth - width) / 2;
-    for (int j = 0; j < (((maxWidth - width) % 2 == 0) ? jj : jj + 1); j++) printf(" ");
-    putchar(VK_PIPE_UP_DOWN);
+    
+    if (isSelected)
+      setTextStyle(menu->selectedStyle);
+    
+    box.left += (boxXSize - 2 - width + 1) / 2;
+    printInBox(box, menu->options[i]);
+    box.left -= (boxXSize - 2 - width + 1) / 2;
+    
+    if (isSelected)
+      setTextStyle(menu->style);
+    box.top++;
   }
-
-  setCursorPos(leftSpace, upSpace + menu->optionsSize + 1);
-  putchar(VK_PIPE_UP_RIGHT);
-  for (int i = 0; i < maxWidth; i++) putchar(VK_PIPE_LEFT_RIGHT);
-  putchar(VK_PIPE_UP_LEFT);
 
   setCursorPos(0, 0);
   setTextStyle(previousTextStyle);
@@ -311,16 +292,10 @@ void _createMenu(Menu* ret, MenuOption* options, size_t optionsSize) {
   ret->options = options;
   ret->optionsSize = optionsSize;
 
-
-  TextStyle defaultStyle;
-  defaultStyle.backgroundColor = TEXT_COLOR_DEFAULT;
-  defaultStyle.textColor = TEXT_COLOR_DEFAULT;
-  defaultStyle.style = TEXT_STYLE_DEFAULT;
-  ret->style = defaultStyle;
-  ret->titleStyle = defaultStyle;
-
-  defaultStyle.style = TEXT_STYLE_INVERTED;
-  ret->selectedStyle = defaultStyle;
+  ret->style = defaultTextStyle();
+  ret->titleStyle = defaultTextStyle();
+  ret->selectedStyle = defaultTextStyle();
+  ret->selectedStyle.style = TEXT_STYLE_INVERTED;
 }
 
 void menuLoop(Menu* menu, DisplayCode displayCode, InputCode inputCode, EventCode eventCode) {
@@ -347,6 +322,96 @@ void toggleCursor(bool show) {
   GetConsoleCursorInfo(stdOutput, &info);
   info.bVisible = show;
   SetConsoleCursorInfo(stdOutput, &info);
+}
+
+RECT printBoxWithTitleAndStyle(const char* title, TextStyle titleStyle, int xSize, int ySize) {
+  const POINT consoleSize = getConsoleSize();
+  const bool hasTitle = title[0] != '\0';
+  int maxWidth = xSize;
+
+  int titleWidth;
+  if (hasTitle) {
+    titleWidth = strlen(title) + 4;
+    if (titleWidth > maxWidth)
+      maxWidth = titleWidth;
+  }
+  const int x = consoleSize.x / 2 - maxWidth / 2;
+  const int y = consoleSize.y / 2 - ySize / 2;
+
+  setCursorPos(x - 1, y - 1);
+  putchar(VK_PIPE_DOWN_RIGHT);
+  for (int i = 0; i < maxWidth; i++)
+    putchar(VK_PIPE_LEFT_RIGHT);
+  putchar(VK_PIPE_DOWN_LEFT);
+  
+  if (hasTitle) {
+    setCursorPos(x + (maxWidth / 2) - (titleWidth / 2), y - 1);
+    putchar(VK_PIPE_UP_DOWN_LEFT);
+
+    const TextStyle previousTextStyle = getTextStyle();
+    setTextStyle(titleStyle);
+    printf(" %s ", title);    
+    setTextStyle(previousTextStyle);
+    
+    putchar(VK_PIPE_UP_DOWN_RIGHT);
+  }
+
+  for (int i = 0; i < ySize ; i++) {
+    setCursorPos(x - 1, y + i);
+    putchar(VK_PIPE_UP_DOWN);
+    moveCursor(maxWidth, 0);
+    putchar(VK_PIPE_UP_DOWN);
+  }
+
+  setCursorPos(x - 1, y + ySize);
+  putchar(VK_PIPE_UP_RIGHT);
+  for (int i = 0; i < maxWidth; i++)
+    putchar(VK_PIPE_LEFT_RIGHT);
+  putchar(VK_PIPE_UP_LEFT);
+
+  RECT ret = { x, y, x + maxWidth - 1, y + ySize - 1 };
+  return ret;
+}
+
+void printInBox(RECT box, const char* toPrint) {
+  int len = strlen(toPrint);
+  int x = box.left;
+  int y = box.top;
+  setCursorPos(x, y);
+  for (int i = 0; i < len; i++) {
+    char c = toPrint[i];
+
+    if (c == '\n') {
+      x = box.left;
+      y++;
+
+      if (y > box.bottom)
+        break;
+      setCursorPos(x, y);
+
+    } else if (c == '\r')
+      x = box.left;
+    else if (x <= box.right) {
+      putchar(c);
+      x++;
+    }
+  }
+}
+
+void printfInBox(RECT box, const char* format, ...) {
+  char buff[4096];
+
+  va_list args;
+  va_start(args, format);
+  vsprintf(buff, format, args);
+  va_end(args);
+
+  printInBox(box, buff);
+}
+
+TextStyle defaultTextStyle() {
+  TextStyle ret = { TEXT_STYLE_DEFAULT, TEXT_COLOR_DEFAULT, TEXT_COLOR_DEFAULT };
+  return ret;
 }
 
 #ifdef __cplusplus

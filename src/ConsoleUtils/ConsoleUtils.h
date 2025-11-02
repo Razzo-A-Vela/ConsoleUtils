@@ -45,6 +45,12 @@ void toggleCursor(bool show);
 #define hideCursor() toggleCursor(false)
 #define createMenu(ret, options) _createMenu(&ret, options, sizeof(options) / sizeof(options[0]))
 #define createMenuWithTitle(ret, _title, options) createMenu(ret, options); ret.title = _title
+RECT printBoxWithTitleAndStyle(const char* title, TextStyle titleStyle, int xSize, int ySize);
+#define printBoxWithTitle(title, xSize, ySize) printBoxWithTitleAndStyle(title, getTextStyle(), xSize, ySize)
+#define printBox(xSize, ySize) printBoxWithTitle("", xSize, ySize)
+void printInBox(RECT box, const char* toPrint);
+void printfInBox(RECT box, const char* format, ...);
+TextStyle defaultTextStyle();
 
 #ifdef __cplusplus
 }
