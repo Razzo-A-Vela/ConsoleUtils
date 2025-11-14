@@ -23,10 +23,10 @@ void getInput(Event* ret);
 void resetEvent(Event* event);
 POINT getConsoleSize();
 bool isChar(KeyCode code);
-void setStyle(int style);
-void setTextColor(int color);
-void setBackgroundColor(int color);
-void setColor(int textColor, int backgroundColor);
+void setStyle(Style style);
+void setTextColor(TextColor color);
+void setBackgroundColor(TextColor color);
+void setColor(TextColor textColor, TextColor backgroundColor);
 void setTextStyle(TextStyle textStyle);
 //! if console starts with non default colors it will reset to default colors (to fix)
 void resetTextStyle();

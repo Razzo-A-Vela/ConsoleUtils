@@ -110,7 +110,7 @@ bool isChar(KeyCode code) {
   return false;
 }
 
-void setStyle(int style) {
+void setStyle(Style style) {
   currentTextStyle.style = style;
   if (style == TEXT_STYLE_DEFAULT) printf("\033[m");
 
@@ -124,17 +124,17 @@ void setStyle(int style) {
   if (style & TEXT_STYLE_DOUBLE_UNDERLINED) printf("\033[21m");
 }
 
-void setTextColor(int color) {
+void setTextColor(TextColor color) {
   currentTextStyle.textColor = color;
   printf("\033[%dm", color);
 }
 
-void setBackgroundColor(int color) {
+void setBackgroundColor(TextColor color) {
   currentTextStyle.backgroundColor = color;
   printf("\033[%dm", color + 10);
 }
 
-void setColor(int textColor, int backgroundColor) {
+void setColor(TextColor textColor, TextColor backgroundColor) {
   setTextColor(textColor);
   setBackgroundColor(backgroundColor);
 }
