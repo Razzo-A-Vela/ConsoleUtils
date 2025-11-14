@@ -6,7 +6,8 @@ typedef char* MenuOption;
 typedef enum {
   UNHANDLED_EVENT,
   KEY_DOWN_EVENT,
-  KEY_UP_EVENT
+  KEY_UP_EVENT,
+  RESIZE_EVENT
 } EventType;
 
 typedef enum {
@@ -47,6 +48,7 @@ typedef struct {
 typedef struct {
   union {
     KeyCode keyCode;
+    POINT windowSize;
   } params;
   EventType eventType;
 } Event;

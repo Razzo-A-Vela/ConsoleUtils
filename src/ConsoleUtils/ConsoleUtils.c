@@ -82,6 +82,23 @@ void getInput(Event* ret) {
       if (keyEvent.dwControlKeyState & LEFT_CTRL_PRESSED ||
           keyEvent.dwControlKeyState & RIGHT_CTRL_PRESSED) ret->params.keyCode.ctrl = true;
       break;
+    
+    case WINDOW_BUFFER_SIZE_EVENT :
+      GetNumberOfConsoleInputEvents(stdInput, &numEvent);
+      if (numEvent > 0) {
+        do {
+          PeekConsoleInput(stdInput, &event, 1, &numEvent);
+          if (event.EventType == WINDOW_BUFFER_SIZE_EVENT)
+            ReadConsoleInput(stdInput, &event, 1, &numEvent);
+          GetNumberOfConsoleInputEvents(stdInput, &numEvent);
+        } while (numEvent > 0 && event.EventType == WINDOW_BUFFER_SIZE_EVENT);
+      }
+
+      WINDOW_BUFFER_SIZE_RECORD windowEvent = event.Event.WindowBufferSizeEvent;
+      ret->eventType = RESIZE_EVENT;
+      ret->params.windowSize.x = windowEvent.dwSize.X;
+      ret->params.windowSize.y = windowEvent.dwSize.Y;
+      break;
   }
 }
 
