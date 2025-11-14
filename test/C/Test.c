@@ -1,3 +1,62 @@
+#include <stdio.h>
+#include <ConsoleUtils.h>
+
+int main() {
+  Originals originals;
+  setRawMode(&originals);
+
+  clearScreen();
+  POINT prevSize = getConsoleSize();
+  for (int x = 0; x < prevSize.x; x++) {
+    for (int y = 0; y < prevSize.y; y++) {
+      setCursorPos(x, y);
+      putchar('X');
+    }
+  }
+
+  Event event;
+  do {
+    getInput(&event);
+
+    if (event.eventType == RESIZE_EVENT) {
+      POINT size = event.params.windowSize;
+      
+      if (size.x < prevSize.x || size.y < prevSize.y) {
+        clearScreen();
+        for (int x = 0; x < size.x; x++) {
+          for (int y = 0; y < size.y; y++) {
+            setCursorPos(x, y);
+            putchar('X');
+          }
+        }
+      } else {
+        if (size.x > prevSize.x) {
+          for (int x = prevSize.x; x < size.x; x++) {
+            for (int y = 0; y < size.y; y++) {
+              setCursorPos(x, y);
+              putchar('X');
+            }
+          }
+        }
+
+        if (size.y > prevSize.y){
+          for (int x = 0; x < prevSize.x; x++) {
+            for (int y = prevSize.y; y < size.y; y++) {
+              setCursorPos(x, y);
+              putchar('X');
+            }
+          }
+        }
+      }
+
+      prevSize = size;
+    }
+  } while(!handleCtrlQ(&event));
+
+  resetRawMode(&originals);
+}
+
+/*
 // TextViewer
 #include <stdio.h>
 #include <ConsoleUtils.h>
@@ -140,6 +199,7 @@ int main() {
   clearScreen();
   return 0;
 }
+*/
 
 
 /*
